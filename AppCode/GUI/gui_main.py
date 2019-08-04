@@ -1,4 +1,7 @@
+import time
 import tkinter
+import requests
+
 from tkinter.ttk import *
 
 
@@ -55,7 +58,28 @@ class SetupPage(tkinter.Frame):
 class MainPage(tkinter.Frame):
     def __init__(self, master):
         tkinter.Frame.__init__(self, master)
-        tkinter.Label(self, text="This is the main page").pack(side="top", pady=10)
+        tkinter.Label(self, text="Time").pack(side="top", pady=10)
+        self.timer = tkinter.Label(self)
+        self.timer.pack(side="top", pady=10)
+        self.get_weather()
+        self.interrupt = False
+        if self.interrupt is False:
+            self.ticking_time()
+
+    def ticking_time(self):
+        time_string = time.strftime("%H:%M:%S")
+        self.timer['text'] = time_string
+        self.timer.after(200, self.ticking_time)
+
+    def get_weather(self):
+        # Toronto City id
+        city_id = '6167865'
+        weather_key = 'ab1a9d34244c62a5053bf8755075d615'
+        url = 'http://api.openweathermap.org/data/2.5/forecast'
+        params = {'APPID': weather_key, 'id': city_id, 'units': 'metric'}
+        response = requests.get(url, params)
+        weather = response.json()
+        print(weather)
 
 
 if __name__ == "__main__":
