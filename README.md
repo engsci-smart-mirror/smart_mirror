@@ -8,6 +8,6 @@ Everything needed for the mirror
 `AppCode/app_language` is for the voice recognition subgroup \
 `AppCpde/app_language/voiceControl.py` is the main place for voice recognition code \
 `AppCode/app_vision` is for the image recognition subgroup\
-`AppCode/app_vision/faceRecognition.py` is the main place for image recognition code
+`AppCode/app_vision/faceRecognition.py` is the main place for image recognition code\
 `AppCode/GUI` is for the GUI designs\
 `AppCode/GUI/main.py` currently has a sign in page, a loading page and a main page.\
