@@ -2,6 +2,7 @@ import time
 import tkinter
 import requests
 
+from datetime import datetime
 from tkinter.ttk import *
 
 
@@ -26,7 +27,7 @@ class SignInPage(tkinter.Frame):
             .pack(side="top", pady=10)
         self.label = tkinter.Label(self)
         self.label.pack(side="top", pady=30)
-        self.counter(5, master)
+        self.counter(2, master)
 
     def counter(self, number, master):
         self.label['text'] = number
@@ -50,7 +51,7 @@ class SetupPage(tkinter.Frame):
     def progressbar(self, number, master):
         self.progress['value'] = number
         if number != 100:
-            self.after(100, self.progressbar, number+1, master)
+            self.after(10, self.progressbar, number+1, master)
         else:
             master.switch_frame(MainPage)
 
@@ -61,10 +62,10 @@ class MainPage(tkinter.Frame):
         tkinter.Label(self, text="Time").pack(side="top", pady=10)
         self.timer = tkinter.Label(self)
         self.timer.pack(side="top", pady=10)
+        self.weather = tkinter.Label(self)
+        self.weather.pack(side='top', pady=10)
+        self.ticking_time()
         self.get_weather()
-        self.interrupt = False
-        if self.interrupt is False:
-            self.ticking_time()
 
     def ticking_time(self):
         time_string = time.strftime("%H:%M:%S")
@@ -75,11 +76,29 @@ class MainPage(tkinter.Frame):
         # Toronto City id
         city_id = '6167865'
         weather_key = 'ab1a9d34244c62a5053bf8755075d615'
-        url = 'http://api.openweathermap.org/data/2.5/forecast'
+        url = 'http://api.openweathermap.org/data/2.5/weather'
         params = {'APPID': weather_key, 'id': city_id, 'units': 'metric'}
         response = requests.get(url, params)
         weather = response.json()
-        print(weather)
+        weather_dict = self.parse_weather(weather)
+        self.weather['text'] = str(weather_dict)
+
+    @staticmethod
+    def parse_weather(weather):
+        weather_dictionary = {
+            'condition': weather['weather'][0]['description'],
+            'temperature': weather['main']['temp'],
+            'min_temp': weather['main']['temp_min'],
+            'max_temp': weather['main']['temp_max'],
+            'humidity': weather['main']['humidity'],
+            'pressure': weather['main']['pressure'],
+            'wind_speed': weather['wind']['speed'],
+            'sunrise': datetime.fromtimestamp(weather['sys']['sunrise']).strftime("%m/%d/%Y, %H:%M:%S"),
+            'sunset': datetime.fromtimestamp(weather['sys']['sunset']).strftime("%m/%d/%Y, %H:%M:%S"),
+            'time': datetime.fromtimestamp(weather['dt']).strftime("%m/%d/%Y, %H:%M:%S"),
+            'location': weather['name']
+        }
+        return weather_dictionary
 
 
 if __name__ == "__main__":
